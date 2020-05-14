@@ -2,6 +2,7 @@ import sys
 
 import pygame
 
+from alien import Alien
 from bullet import Bullet
 from settings import Settings
 
@@ -38,11 +39,13 @@ def check_keyup_events(event, spaceship):
         spaceship.moving_up = False
 
 
-def update_screen(game_settings, screen, spaceship, bullets):
+def update_screen(game_settings, screen, spaceship, aliens, bullets):
     screen.fill(game_settings.background_color)
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     spaceship.blitme()
+    aliens.draw(screen)
+
     pygame.display.flip()
 
 def update_bullets(bullets):
@@ -52,6 +55,25 @@ def update_bullets(bullets):
     for bullet in bullets.copy():
         if bullet.rect.right > game_settings.windowWidth:
             bullets.remove(bullet)
+def get_number_aliens_y (game_settings, alien_height):
+    available_space_y = game_settings.windowHeight - 2 * alien_height
+    number_aliens_y = int(available_space_y / (2 * alien_height))
 
-# def fire_bullet(game_settings, screen, spaceship, bullets):
-#
+    return number_aliens_y
+
+def create_alien (game_settings, screen, aliens, alien_number):
+    alien = Alien(game_settings, screen)
+    alien_height = alien.rect.height
+    alien.y = alien_height + 2 * alien_height * alien_number
+    alien.rect.y = alien.y
+    aliens.add(alien)
+
+def create_fleet (game_settings, screen, aliens):
+
+    alien = Alien(game_settings, screen)
+    number_aliens_y = get_number_aliens_y(game_settings, alien.rect.height)
+
+    for alien_number in range(number_aliens_y):
+        create_alien(game_settings,screen,aliens,alien_number)
+
+
