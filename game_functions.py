@@ -57,23 +57,29 @@ def update_bullets(bullets):
             bullets.remove(bullet)
 def get_number_aliens_y (game_settings, alien_height):
     available_space_y = game_settings.windowHeight - 2 * alien_height
-    number_aliens_y = int(available_space_y / (2 * alien_height))
+    number_aliens_y = int(available_space_y / (alien_height))
 
     return number_aliens_y
 
-def create_alien (game_settings, screen, aliens, alien_number):
+def create_alien (game_settings, screen, aliens, alien_number, row_number):
     alien = Alien(game_settings, screen)
     alien_height = alien.rect.height
     alien.y = alien_height + 2 * alien_height * alien_number
     alien.rect.y = alien.y
+    alien.rect.x = game_settings.windowWidth - (alien.rect.width + 2 * alien.rect.width * row_number)
     aliens.add(alien)
 
-def create_fleet (game_settings, screen, aliens):
+def create_fleet (game_settings, screen, ship, aliens):
 
     alien = Alien(game_settings, screen)
     number_aliens_y = get_number_aliens_y(game_settings, alien.rect.height)
 
-    for alien_number in range(number_aliens_y):
-        create_alien(game_settings,screen,aliens,alien_number)
+    number_rows = get_number_row(game_settings,ship.rect.width, alien.rect.width)
+    for row_number in range (number_rows):
+        for alien_number in range(number_aliens_y):
+            create_alien(game_settings,screen,aliens,alien_number, row_number)
 
-
+def get_number_row (game_settings, ship_width, alien_width):
+    available_space_x = (game_settings.windowWidth - (3*alien_width) - ship_width)
+    number_rows = int(available_space_x / (2*alien_width))
+    return number_rows
